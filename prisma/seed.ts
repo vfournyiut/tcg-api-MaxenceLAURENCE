@@ -60,49 +60,28 @@ async function main() {
 
     console.log(`✅ Created ${pokemonData.length} Pokemon cards`);
 
-    await prisma.deck.createMany({ // création des decks 
-        data: [
-            {
-                name: "Starter Deck",
-                userId: redUser.id,
+    // console.log(randomCards);
+    // console.log(createdCards)0*;
+
+    const users = [redUser, blueUser];
+    for (const user of users) {
+        const randomCards = [...createdCards].sort(() => 0.5 - Math.random()).slice(0, 10);
+        await prisma.deck.create({
+            data: {
+                name: `${user.username}'s Deck`,
+                userId: user.id,
+                cards: {
+                    create: randomCards.map((randomCard) => {
+                        return {
+                            cardId: randomCard.id
+                        }
+                    })
+                }
             },
-            {
-                name: "Starter Deck",
-                userId: blueUser.id,
-            },
-        ],
-    });
-
-    console.log("✅ Created decks:", redUser.username, blueUser.username);
-
-    const redDeck = await prisma.deck.findFirst({ where: { userId: redUser.id } }); // Récupérer les id car autoincrémentation (donc pas forcément 1 et 2 !!) 
-    const blueDeck = await prisma.deck.findFirst({ where: { userId: blueUser.id } });
-
-    if (!redDeck || !blueDeck) {
-        throw new Error("Decks not found");
+        });
     }
 
-    const redDeckCards = Array.from({ length: 10 }).map(() => { // 10 carte aléatoire pour le deck de l'user rouge
-        const randomCard = createdCards[Math.floor(Math.random() * createdCards.length)];
-        return {
-            deckId: redDeck.id, // l'id du deck de l'user rouge
-            cardId: randomCard.id, // carte aléatoire
-        };
-    });
-
-    const blueDeckCards = Array.from({ length: 10 }).map(() => { // 10 carte aléatoire pour le deck de l'user bleu 
-        const randomCard = createdCards[Math.floor(Math.random() * createdCards.length)];
-        return {
-            deckId: blueDeck.id, // l'id du deck de l'user bleu
-            cardId: randomCard.id, // carte aléatoire
-        };
-    });
-
-    await prisma.deckCard.createMany({
-        data: [...redDeckCards, ...blueDeckCards], // les "..." = les 10 élément de redDeckCards et blueDeckCards
-    });
-
-    console.log("✅ Created deckcards");
+    console.log("✅ Created decks");
 
     console.log("\n🎉 Database seeding completed!");
 }
