@@ -1,13 +1,15 @@
 import bcrypt from "bcryptjs";
-import {readFileSync} from "fs";
-import {join} from "path";
-import {prisma} from "../src/database";
-import {CardModel} from "../src/generated/prisma/models/Card";
-import {PokemonType} from "../src/generated/prisma/enums";
+import { readFileSync } from "fs";
+import { join } from "path";
+import { prisma } from "../src/database";
+import { CardModel } from "../src/generated/prisma/models/Card";
+import { PokemonType } from "../src/generated/prisma/enums";
 
 async function main() {
     console.log("🌱 Starting database seed...");
 
+    await prisma.deckCard.deleteMany();
+    await prisma.deck.deleteMany();
     await prisma.card.deleteMany();
     await prisma.user.deleteMany();
 
@@ -28,8 +30,8 @@ async function main() {
         ],
     });
 
-    const redUser = await prisma.user.findUnique({where: {email: "red@example.com"}});
-    const blueUser = await prisma.user.findUnique({where: {email: "blue@example.com"}});
+    const redUser = await prisma.user.findUnique({ where: { email: "red@example.com" } });
+    const blueUser = await prisma.user.findUnique({ where: { email: "blue@example.com" } });
 
     if (!redUser || !blueUser) {
         throw new Error("Failed to create users");
@@ -57,6 +59,29 @@ async function main() {
     );
 
     console.log(`✅ Created ${pokemonData.length} Pokemon cards`);
+
+    // console.log(randomCards);
+    // console.log(createdCards)0*;
+
+    const users = [redUser, blueUser];
+    for (const user of users) {
+        const randomCards = [...createdCards].sort(() => 0.5 - Math.random()).slice(0, 10);
+        await prisma.deck.create({
+            data: {
+                name: `${user.username}'s Deck`,
+                userId: user.id,
+                cards: {
+                    create: randomCards.map((randomCard) => {
+                        return {
+                            cardId: randomCard.id
+                        }
+                    })
+                }
+            },
+        });
+    }
+
+    console.log("✅ Created decks");
 
     console.log("\n🎉 Database seeding completed!");
 }
