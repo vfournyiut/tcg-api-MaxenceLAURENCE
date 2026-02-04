@@ -3,7 +3,6 @@ import { env } from "./env";
 import { authRouter } from "./auth/auth.route";
 import express from "express";
 import cors from "cors";
-import http from 'http';
 
 // Create Express app
 export const app = express();
