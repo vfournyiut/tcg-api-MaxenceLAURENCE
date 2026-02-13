@@ -6,13 +6,35 @@ import { authenticateToken } from './auth.middleware'
 
 export const authRouter = Router()
 
-// Route pour tester le middleware d'authentification
+/**
+ * Route GET /api/auth/test-auth
+ * 
+ * Route de test pour vérifier si le token JWT est valide.
+ * Nécessite l'authentification middleware `authenticateToken`.
+ * 
+ * @param {Request} req - L'objet Request d'Express. Contient `userId` et `email` ajoutés par le middleware.
+ * @param {Response} res - L'objet Response d'Express.
+ * @returns {Response} 200 OK avec le message et les infos utilisateur décodées du token.
+ */
 authRouter.get('/test-auth', authenticateToken, (req: Request, res: Response) => {
     res.status(200).json({ message: 'Authenticated', userId: req.userId, email: req.email })
 })
 
-// POST /api/auth/sign-up 
-// création d'un user 
+
+/**
+ * Route POST /api/auth/sign-up
+ * 
+ * Crée un nouvel utilisateur.
+ * Hash le mot de passe et stocke l'utilisateur en base de données.
+ * 
+ * @param {Request} req - L'objet Request d'Express. Contient `email`, `username`, et `password` dans le body.
+ * @param {Response} res - L'objet Response d'Express.
+ * @returns {Response}
+ *  - 201: Utilisateur créé avec succès. Retourne le token et les infos utilisateur.
+ *  - 400: Données manquantes (email, username, ou password).
+ *  - 409: Conflit, email ou username déjà utilisé.
+ *  - 500: Erreur serveur interne.
+ */
 authRouter.post('/sign-up', async (req: Request, res: Response) => {
     const { email, username, password } = req.body
 
@@ -92,8 +114,21 @@ authRouter.post('/sign-up', async (req: Request, res: Response) => {
 
 
 
-// POST /api/auth/sign-in
-// connexion  
+
+/**
+ * Route POST /api/auth/sign-in
+ * 
+ * Authentifie un utilisateur existant.
+ * Vérifie l'email et le mot de passe, puis génère et retourne un token JWT.
+ * 
+ * @param {Request} req - L'objet Request d'Express. Contient `email` et `password` dans le body.
+ * @param {Response} res - L'objet Response d'Express.
+ * @returns {Response} 
+ *  - 200: Connexion réussie, retourne le token et les infos utilisateur.
+ *  - 400: Email ou mot de passe manquant.
+ *  - 401: Email ou mot de passe incorrect (authentification échouée).
+ *  - 500: Erreur serveur interne.
+ */
 authRouter.post('/sign-in', async (req: Request, res: Response) => {
     const { email, password } = req.body
 

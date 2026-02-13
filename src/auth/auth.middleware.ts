@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from 'express'
+import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 
 // Étendre le type Request pour ajouter userId et email
@@ -11,6 +11,19 @@ declare global {
     }
 }
 
+/**
+ * Middleware d'authentification JWT.
+ * 
+ * Vérifie la présence et la validité du token JWT dans l'en-tête Authorization.
+ * Si le token est valide, ajoute les informations de l'utilisateur (userId, email) à l'objet Request.
+ * 
+ * @param {Request} req - L'objet Request d'Express.
+ * @param {Response} res - L'objet Response d'Express.
+ * @param {NextFunction} next - La fonction NextFunction d'Express.
+ * @returns {void | Response} Passe au middleware suivant via `next()` ou retourne une réponse 401.
+ * 
+ * @throws {401} Token manquant ou invalide/expiré.
+ */
 export const authenticateToken = (
     req: Request,
     res: Response,
@@ -21,7 +34,7 @@ export const authenticateToken = (
     const token = authHeader && authHeader.split(' ')[1] // Format: "Bearer TOKEN"
 
     if (!token) {
-        return res.status(401).json({error: 'Token manquant'})
+        return res.status(401).json({ error: 'Token manquant' })
     }
 
     try {
@@ -33,11 +46,11 @@ export const authenticateToken = (
 
         // 3. Ajouter userId et email à la requête pour l'utiliser dans les routes
         req.userId = decoded.userId
-        req.email = decoded.email 
+        req.email = decoded.email
 
         // 4. Passer au prochain middleware ou à la route
         return next()
     } catch (error) {
-        return res.status(401).json({error: 'Token invalide ou expiré'})
+        return res.status(401).json({ error: 'Token invalide ou expiré' })
     }
 }

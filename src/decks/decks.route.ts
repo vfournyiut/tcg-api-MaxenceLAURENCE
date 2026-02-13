@@ -4,8 +4,24 @@ import { prisma } from "../database";
 
 export const decksRouter = Router()
 
-// POST /api/decks
-// création d'un deck pour l'utilisateur connecté 
+
+/**
+ * Route POST /api/decks
+ * 
+ * Crée un nouveau deck pour l'utilisateur connecté.
+ * Vérifie que le deck contient exactement 10 cartes valides et possède un nom.
+ * 
+ * @param {Request} req - L'objet Request d'Express.
+ *  - body.name: Le nom du deck.
+ *  - body.cards: Un tableau d'IDs de cartes (number[]).
+ *  - userId: Ajouté par le middleware d'authentification.
+ * @param {Response} res - L'objet Response d'Express.
+ * @returns {Response}
+ *  - 201: Deck créé avec succès.
+ *  - 400: Données invalides (nom manquant, nombre de cartes incorrect, cartes inexistantes).
+ *  - 401: Utilisateur non authentifié.
+ *  - 500: Erreur serveur interne.
+ */
 decksRouter.post('/', authenticateToken, async (req: Request, res: Response) => {
     const { name, cards } = req.body
 
@@ -63,8 +79,21 @@ decksRouter.post('/', authenticateToken, async (req: Request, res: Response) => 
 })
 
 
-// GET /api/decks/mine
-// Lister tous les decks de l'utilisateur authentifié avec leurs cartes.
+
+/**
+ * Route GET /api/decks/mine
+ * 
+ * Récupère la liste de tous les decks appartenant à l'utilisateur connecté.
+ * Inclut les cartes associées à chaque deck.
+ * 
+ * @param {Request} req - L'objet Request d'Express.
+ *  - userId: Ajouté par le middleware d'authentification.
+ * @param {Response} res - L'objet Response d'Express.
+ * @returns {Response}
+ *  - 200: Succès, retourne la liste des decks.
+ *  - 401: Utilisateur non authentifié.
+ *  - 500: Erreur serveur interne.
+ */
 decksRouter.get('/mine', authenticateToken, async (req: Request, res: Response) => {
     try {
         // récupération de l'id du client authentifier : 
@@ -93,8 +122,24 @@ decksRouter.get('/mine', authenticateToken, async (req: Request, res: Response) 
 })
 
 
-// GET /api/decks/:id
-// Consulter un deck spécifique avec ses cartes.
+
+/**
+ * Route GET /api/decks/:id
+ * 
+ * Récupère les détails d'un deck spécifique par son ID.
+ * Vérifie que le deck existe et appartient à l'utilisateur connecté.
+ * 
+ * @param {Request} req - L'objet Request d'Express.
+ *  - params.deckId: L'ID du deck à récupérer.
+ *  - userId: Ajouté par le middleware d'authentification.
+ * @param {Response} res - L'objet Response d'Express.
+ * @returns {Response}
+ *  - 200: Succès, retourne le deck avec ses cartes.
+ *  - 401: Utilisateur non authentifié.
+ *  - 403: Le deck n'appartient pas à l'utilisateur.
+ *  - 404: Le deck n'existe pas.
+ *  - 500: Erreur serveur interne.
+ */
 decksRouter.get('/:deckId', authenticateToken, async (req: Request, res: Response) => {
     const deckId = parseInt(req.params.deckId);
 
@@ -133,8 +178,28 @@ decksRouter.get('/:deckId', authenticateToken, async (req: Request, res: Respons
 })
 
 
-// PATCH /api/decks/:id
-// Modifier le nom et/ou les cartes du deck.
+
+/**
+ * Route PATCH /api/decks/:id
+ * 
+ * Modifie un deck existant.
+ * Met à jour le nom et/ou les cartes du deck.
+ * Note: L'implémentation actuelle supprime et recrée le deck et ses associations.
+ * 
+ * @param {Request} req - L'objet Request d'Express.
+ *  - params.deckId: L'ID du deck à modifier.
+ *  - body.name: Le nouveau nom du deck.
+ *  - body.cards: La nouvelle liste d'IDs de cartes (doit contenir 10 cartes valides).
+ *  - userId: Ajouté par le middleware d'authentification.
+ * @param {Response} res - L'objet Response d'Express.
+ * @returns {Response}
+ *  - 200: Succès, retourne le nouveau deck créé.
+ *  - 400: Données invalides (nom manquant, nombre de cartes incorrect, cartes inexistantes).
+ *  - 401: Utilisateur non authentifié.
+ *  - 403: Le deck n'appartient pas à l'utilisateur.
+ *  - 404: Le deck n'existe pas.
+ *  - 500: Erreur serveur interne.
+ */
 decksRouter.patch('/:deckId', authenticateToken, async (req: Request, res: Response) => {
     const deckId = parseInt(req.params.deckId);
     const { name, cards } = req.body
@@ -221,8 +286,24 @@ decksRouter.patch('/:deckId', authenticateToken, async (req: Request, res: Respo
 })
 
 
-// DELETE /api/decks/:id
-// Supprimer définitivement un deck 
+
+/**
+ * Route DELETE /api/decks/:id
+ * 
+ * Supprime définitivement un deck.
+ * Vérifie que le deck existe et appartient à l'utilisateur connecté avant de le supprimer.
+ * 
+ * @param {Request} req - L'objet Request d'Express.
+ *  - params.deckId: L'ID du deck à supprimer.
+ *  - userId: Ajouté par le middleware d'authentification.
+ * @param {Response} res - L'objet Response d'Express.
+ * @returns {Response}
+ *  - 200: Succès, retourne les infos du deck supprimé.
+ *  - 401: Utilisateur non authentifié.
+ *  - 403: Le deck n'appartient pas à l'utilisateur.
+ *  - 404: Le deck n'existe pas.
+ *  - 500: Erreur serveur interne.
+ */
 decksRouter.delete('/:deckId', authenticateToken, async (req: Request, res: Response) => {
     const deckId = parseInt(req.params.deckId);
 
