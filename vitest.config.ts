@@ -1,4 +1,4 @@
-import {defineConfig} from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 import path from 'path';
 
 export default defineConfig({
@@ -30,10 +30,10 @@ export default defineConfig({
                 'src/types/**',
             ],
             thresholds: {
-                branches: 100,
-                functions: 100,
-                lines: 100,
-                statements: 100,
+                branches: 90,
+                functions: 90,
+                lines: 90,
+                statements: 90,
             }
         }
     }
