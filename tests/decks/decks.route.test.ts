@@ -236,7 +236,7 @@ describe('Decks Routes', () => {
 
             expect(response.status).toBe(500);
         });
-        it('doit retourner 401 si userId manquant après auth (vérification défensive)', async () => {
+        it('doit retourner 401 si userId manquant après auth', async () => {
             (authenticateToken as any).mockImplementationOnce((req: Request, res: Response, next: NextFunction) => {
                 req.userId = undefined;
                 next();

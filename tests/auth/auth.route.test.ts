@@ -163,13 +163,10 @@ describe('Auth Routes', () => {
                 id: 1,
                 email: loginData.email,
                 username: 'testuser',
-                password: await bcrypt.hash(loginData.password, 10), // We use real bcrypt here for validation? Or we can mock confirm
+                password: await bcrypt.hash(loginData.password, 10),
             };
 
             prismaMock.user.findUnique.mockResolvedValue(mockUser as any);
-
-            // We need to verify that the controller uses bcrypt.compare
-            // Since we are running in the same process, we can rely on real bcrypt if we hashed it correctly above.
 
             const response = await request(app)
                 .post('/api/auth/sign-in')
@@ -194,7 +191,6 @@ describe('Auth Routes', () => {
         });
 
         it('doit retourner 400 si le mot de passe est absent', async () => {
-            // User found
             prismaMock.user.findUnique.mockResolvedValue({ id: 1 } as any);
 
             const response = await request(app)
