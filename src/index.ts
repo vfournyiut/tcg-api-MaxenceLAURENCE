@@ -1,10 +1,10 @@
-import cors from 'cors'
-import express from 'express'
-import { createServer } from 'http'
-
-import { authRouter } from './auth/auth.route'
-import { cardsRouter } from './cards/cards.route'
-import { env } from './env'
+import { createServer } from "http";
+import { env } from "./env";
+import { authRouter } from "./auth/auth.route";
+import { cardsRouter } from "./cards/cards.route";
+import { decksRouter } from "./decks/decks.route";
+import express from "express";
+import cors from "cors";
 
 // Create Express app
 export const app = express()
@@ -32,6 +32,10 @@ app.use('/api/auth', authRouter)
 
 // Utilisation du router cards
 app.use('/api/cards', cardsRouter)
+
+// Utilisation du router decks 
+app.use('/api/decks', decksRouter)
+
 
 // Start server only if this file is run directly (not imported for tests)
 if (require.main === module) {
