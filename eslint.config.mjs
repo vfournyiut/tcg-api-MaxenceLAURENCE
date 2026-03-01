@@ -39,6 +39,13 @@ export default tseslint.config(
         },
     },
     {
-        ignores: ['node_modules', 'dist', 'build', 'tests', 'public'],
+        ignores: [
+            'node_modules',
+            'dist',
+            'build',
+            'tests',
+            'public',
+            'src/generated',
+        ],
     },
 )
