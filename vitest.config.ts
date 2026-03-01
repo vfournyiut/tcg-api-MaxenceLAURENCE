@@ -4,8 +4,8 @@ import path from 'path';
 export default defineConfig({
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, './src')
-        }
+            '@': path.resolve(__dirname, './src'),
+        },
     },
     test: {
         globals: true,
@@ -34,7 +34,7 @@ export default defineConfig({
                 functions: 100,
                 lines: 100,
                 statements: 100,
-            }
-        }
-    }
-});
+            },
+        },
+    },
+})

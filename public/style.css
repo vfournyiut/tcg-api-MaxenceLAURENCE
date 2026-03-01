@@ -30,7 +30,9 @@ h1 {
     color: #4ec9b0;
 }
 
-input, button, textarea {
+input,
+button,
+textarea {
     font-family: monospace;
     padding: 8px;
     margin: 5px 0;

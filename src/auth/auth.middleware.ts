@@ -2,12 +2,10 @@ import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 
 // Étendre le type Request pour ajouter userId et email
-declare global {
-    namespace Express {
-        interface Request {
-            userId?: number
-            email?: string
-        }
+declare module 'express' {
+    export interface Request {
+        userId?: number
+        email?: string
     }
 }
 
@@ -51,6 +49,7 @@ export const authenticateToken = (
         // 4. Passer au prochain middleware ou à la route
         return next()
     } catch (error) {
+        console.error('Erreur de connexion:', error)
         return res.status(401).json({ error: 'Token invalide ou expiré' })
     }
 }

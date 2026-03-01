@@ -1,42 +1,51 @@
 name: CI - Tests & Build
 
 on:
-  pull_request:
-    branches:
-      - main
-      - develop
-  push:
-    branches:
-      - main
+    pull_request:
+        branches:
+            - main
+            - develop
+    push:
+        branches:
+            - main
 
 jobs:
-  test-and-build:
-    runs-on: ubuntu-latest
+    test-and-build:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '20'
 
-      - name: Clean npm cache
-        run: npm cache clean --force
+            - name: Clean npm cache
+              run: npm cache clean --force
 
-      - name: Install dependencies
-        run: |
-          rm -rf node_modules package-lock.json
-          npm install
+            - name: Install dependencies
+              run: |
+                  rm -rf node_modules package-lock.json
+                  npm install
 
-      - name: Generate Prisma Client
-        run: npx prisma generate
-        env:
-          DATABASE_URL: postgresql://user:pass@localhost:5432/db
+            - name: Generate Prisma Client
+              run: npx prisma generate
+              env:
+                  DATABASE_URL: postgresql://user:pass@localhost:5432/db
 
-      - name: Run TypeScript type check
-        run: npm run ts:check
+            - name: Run TypeScript type check
+              run: npm run ts:check
 
-      - name: Build project
-        run: npm run build
+            - name: Lint project
+              run: npm run lint
+
+            - name: Format
+              run: npm run format
+
+            - name: Build project
+              run: npm run build
+
+            - name: Run test
+              run: npm run test

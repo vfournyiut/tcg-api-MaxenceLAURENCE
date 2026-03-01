@@ -1,7 +1,8 @@
-import { Request, Response, Router } from 'express'
-import { prisma } from "../database";
 import bcrypt from 'bcrypt'
+import { Request, Response, Router } from 'express'
 import jwt from 'jsonwebtoken'
+
+import { prisma } from '../database'
 import { authenticateToken } from './auth.middleware'
 
 export const authRouter = Router()
@@ -39,53 +40,53 @@ authRouter.post('/sign-up', async (req: Request, res: Response) => {
     const { email, username, password } = req.body
 
     try {
-        // 1. vérification unicité du mail 
+        // 1. vérification unicité du mail
         if (!email) {
             return res.status(400).json({ error: 'Email manquant' })
         }
 
-        const emailUnique = !await prisma.user.findUnique({ // email unique = PAS dans la base
-            where: { email }
-        })
+        const emailUnique = !(await prisma.user.findUnique({
+            // email unique = PAS dans la base
+            where: { email },
+        }))
 
-        if (!emailUnique) { // si l'email n'est pas unique 
-            return res.status(409).json({ error: 'L\'email déja utiliser' })
+        if (!emailUnique) {
+            // si l'email n'est pas unique
+            return res.status(409).json({ error: "L'email déja utiliser" })
         }
 
-
-        // 2. hash du mot de passe 
+        // 2. hash du mot de passe
         if (!password) {
             return res.status(400).json({ error: 'Password manquant' })
         }
 
         const hashPassword = await bcrypt.hash(password, 10)
 
-
         // 3. vérification username
         if (!username) {
             return res.status(400).json({ error: 'Username manquant' })
         }
 
-        const usernameUnique = !await prisma.user.findUnique({ // username unique = PAS dans la base
-            where: { username }
-        })
+        const usernameUnique = !(await prisma.user.findUnique({
+            // username unique = PAS dans la base
+            where: { username },
+        }))
 
-        if (!usernameUnique) { // si l'username n'est pas unique 
-            return res.status(409).json({ error: 'L\'username déja utiliser' })
+        if (!usernameUnique) {
+            // si l'username n'est pas unique
+            return res.status(409).json({ error: "L'username déja utiliser" })
         }
 
-
-        // 4. écriture en base de donnée 
+        // 4. écriture en base de donnée
         const user = await prisma.user.create({
             data: {
                 username: username,
                 email: email,
-                password: hashPassword
-            }
+                password: hashPassword,
+            },
         })
 
-
-        // 5. tocken JWT 
+        // 5. tocken JWT
         const token = jwt.sign(
             {
                 userId: user.id,
@@ -94,7 +95,6 @@ authRouter.post('/sign-up', async (req: Request, res: Response) => {
             process.env.JWT_SECRET as string,
             { expiresIn: '7d' },
         )
-
 
         // 6. Retourner le token
         return res.status(201).json({
@@ -142,9 +142,10 @@ authRouter.post('/sign-in', async (req: Request, res: Response) => {
         })
 
         if (!user) {
-            return res.status(401).json({ error: 'Email ou mot de passe incorrect' })
+            return res
+                .status(401)
+                .json({ error: 'Email ou mot de passe incorrect' })
         }
-
 
         // 2. Vérifier le mot de passe
         if (!password) {
@@ -153,9 +154,10 @@ authRouter.post('/sign-in', async (req: Request, res: Response) => {
         const isPasswordValid = await bcrypt.compare(password, user.password)
 
         if (!isPasswordValid) {
-            return res.status(401).json({ error: 'Email ou mot de passe incorrect' })
+            return res
+                .status(401)
+                .json({ error: 'Email ou mot de passe incorrect' })
         }
-
 
         // 3. Générer le JWT
         const token = jwt.sign(
@@ -166,7 +168,6 @@ authRouter.post('/sign-in', async (req: Request, res: Response) => {
             process.env.JWT_SECRET as string,
             { expiresIn: '1h' }, // Le token expire dans 1 heure
         )
-
 
         // 4. Retourner le token
         return res.status(200).json({
