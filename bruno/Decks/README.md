@@ -92,7 +92,7 @@ Supprime définitivement un deck.
 
 ```json
 {
-  "message": "Deck deleted successfully"
+    "message": "Deck deleted successfully"
 }
 ```
 

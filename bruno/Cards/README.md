@@ -17,15 +17,15 @@ Récupère toutes les cartes disponibles dans le jeu.
 
 ```json
 [
-  {
-    "id": "001",
-    "name": "Bulbasaur",
-    "hp": 45,
-    "attack": 49,
-    "type": "GRASS",
-    "pokedexNumber": 1,
-    "imgUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
-  }
+    {
+        "id": "001",
+        "name": "Bulbasaur",
+        "hp": 45,
+        "attack": 49,
+        "type": "GRASS",
+        "pokedexNumber": 1,
+        "imgUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
+    }
 ]
 ```
 
