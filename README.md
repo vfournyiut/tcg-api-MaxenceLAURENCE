@@ -279,10 +279,10 @@ npm run ts:check     # Vérifie les erreurs TypeScript sans compiler
 Pour vérifier que tout fonctionne correctement :
 
 1. **Serveur** : Visitez http://localhost:3001/api/health
-   - Devrait retourner `{"status":"ok","message":"TCG Backend Server is running"}`
+    - Devrait retourner `{"status":"ok","message":"TCG Backend Server is running"}`
 
 2. **Base de données** : Ouvrez Prisma Studio (`npm run db:studio`)
-   - Vérifiez que les tables `Card` et `User` contiennent des données
+    - Vérifiez que les tables `Card` et `User` contiennent des données
 
 # Comment réaliser ce TP
 
@@ -356,9 +356,9 @@ Une fois le ticket terminé, créez une **Pull Request** vers la branche `main` 
 1. Allez sur GitHub et créez une PR depuis votre branche
 2. **Liez la PR à l'issue** correspondante (utilisez "Closes #1" dans la description)
 3. Remplissez la description de la PR avec :
-   - Ce qui a été fait
-   - Comment tester
-   - Captures d'écran si pertinent
+    - Ce qui a été fait
+    - Comment tester
+    - Captures d'écran si pertinent
 
 > ⚠️ **Important (GitHub Classroom)** : Lors de la création de la PR, GitHub peut proposer de cibler le **repository template** (celui d'origine) au lieu de **votre propre repository**. Assurez-vous que la PR cible bien **votre dépôt** (`votre-username/nom-du-repo`) et non le dépôt template. Si vous voyez une PR qui pointe vers un autre repository, changez le "base repository" pour sélectionner le vôtre.
 
