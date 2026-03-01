@@ -5,6 +5,8 @@ import { cardsRouter } from "./cards/cards.route";
 import { decksRouter } from "./decks/decks.route";
 import express from "express";
 import cors from "cors";
+import swaggerUi from 'swagger-ui-express'
+import { swaggerDocument } from './docs'
 
 // Create Express app
 export const app = express();
@@ -26,6 +28,12 @@ app.use(express.static('public'));
 app.get("/api/health", (_req, res) => {
     res.json({ status: "ok", message: "TCG Backend Server is running" });
 });
+
+// Documentation Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: "API Documentation"
+}))
 
 
 // Utilisation du router utilisateur

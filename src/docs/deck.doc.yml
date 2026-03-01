@@ -1,0 +1,261 @@
+paths:
+  /api/decks:
+    post:
+      tags:
+        - Decks
+      summary: Créer un nouveau deck pour l'utilisateur connecté
+      description: Vérifie que le deck contient exactement 10 cartes valides et possède un nom, puis l'associe à l'utilisateur connecté.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - cards
+              properties:
+                name:
+                  type: string
+                  example: "red's Deck"
+                cards:
+                  type: array
+                  description: "Tableau de 10 Pokedex IDs des cartes composant le deck."
+                  items:
+                    type: integer
+                  example: [25, 25, 25, 25, 27, 27, 27, 27, 145, 145]
+      responses:
+        '201':
+          description: Deck créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deck'
+        '400':
+          description: Données invalides (nom manquant, nombre de cartes incorrect, cartes inexistantes)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Utilisateur non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur interne
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/decks/mine:
+    get:
+      tags:
+        - Decks
+      summary: Récupérer tous les decks appartenant à l'utilisateur connecté
+      description: Retourne la liste des decks de l'utilisateur, incluant les cartes associées à chaque deck.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Liste des decks de l'utilisateur
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/Deck'
+                    - type: object
+                      properties:
+                        cards:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/DeckCard'
+        '401':
+          description: Utilisateur non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur interne
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/decks/{deckId}:
+    get:
+      tags:
+        - Decks
+      summary: Récupérer un deck spécifique
+      description: Récupère les détails d'un deck par son ID en vérifiant qu'il existe et appartient à l'utilisateur.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: deckId
+          required: true
+          schema:
+            type: integer
+          description: ID du deck à récupérer
+      responses:
+        '200':
+          description: Deck complet avec ses cartes
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Deck'
+                  - type: object
+                    properties:
+                      cards:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/DeckCard'
+        '401':
+          description: Utilisateur non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Le deck n'appartient pas à l'utilisateur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Le deck n'existe pas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur interne
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+    patch:
+      tags:
+        - Decks
+      summary: Modifier un deck existant
+      description: Met à jour le nom et/ou la liste (exigence 10 de taille) des cartes d'un deck en toute sécurité. 
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: deckId
+          required: true
+          schema:
+            type: integer
+          description: ID du deck à modifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - cards
+              properties:
+                name:
+                  type: string
+                  example: "red's Deck mis à jour"
+                cards:
+                  type: array
+                  description: "Nouvelle liste de 10 Pokedex IDs des cartes."
+                  items:
+                    type: integer
+                  example: [25, 25, 25, 25, 27, 27, 27, 27, 145, 145]
+      responses:
+        '200':
+          description: Deck correctement modifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deck'
+        '400':
+          description: Données invalides (nom manquant, nombre de cartes incorrect, cartes inexistantes)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Utilisateur non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Le deck n'appartient pas à l'utilisateur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Le deck n'existe pas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur interne
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Decks
+      summary: Supprimer un deck existant
+      description: Supprime définitivement le deck qui lui est lié et toutes ses cartes associées.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: deckId
+          required: true
+          schema:
+            type: integer
+          description: ID du deck à supprimer
+      responses:
+        '200':
+          description: Le deck supprimé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deck'
+        '401':
+          description: Utilisateur non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Le deck n'appartient pas à l'utilisateur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Le deck n'existe pas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur interne
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

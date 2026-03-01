@@ -1,0 +1,174 @@
+paths:
+  /api/auth/test-auth:
+    get:
+      tags:
+        - Authentication
+      summary: Test de connexion utilisateur
+      description: Route de test pour vérifier si le token JWT est valide.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK, le token est valide
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Authenticated"
+                  userId:
+                    type: integer
+                    example: 1
+                  email:
+                    type: string
+                    example: "red@example.com"
+        '401':
+          description: Non autorisé (Token manquant ou invalide/expiré)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/sign-up:
+    post:
+      tags:
+        - Authentication
+      summary: Créer un nouvel utilisateur
+      description: Crée un nouvel utilisateur en hachant le mot de passe et retourne un token JWT.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - username
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "ash@example.com"
+                username:
+                  type: string
+                  example: "ash"
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+      responses:
+        '201':
+          description: Utilisateur créé avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User crée"
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "ash"
+                      email:
+                        type: string
+                        example: "ash@example.com"
+        '400':
+          description: Données manquantes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflit (email ou username déjà utilisé)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/sign-in:
+    post:
+      tags:
+        - Authentication
+      summary: Se connecter
+      description: Authentifie un utilisateur existant et lui génère un token JWT.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "red@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+      responses:
+        '200':
+          description: Connexion réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Connexion réussie"
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "red"
+                      email:
+                        type: string
+                        example: "red@example.com"
+        '400':
+          description: Données manquantes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Email ou mot de passe incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

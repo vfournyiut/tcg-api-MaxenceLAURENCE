@@ -1,0 +1,33 @@
+paths:
+  /api/cards:
+    get:
+      tags:
+        - Cards
+      summary: Récupérer la liste des toutes les cartes
+      description: Récupère la liste de toutes les cartes existantes triées par numéro de pokedex.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Liste des cartes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cardsList:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Card'
+        '401':
+          description: Non autorisé (Token manquant ou invalide/expiré)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur interne
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
